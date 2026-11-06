@@ -1,3 +1,4 @@
+import { useState } from "react";
 import image from "../assets/hero.png";
 
 
@@ -10,9 +11,15 @@ function StudentCard({
   filiere,
   anneeEtude,
   groupe,
+  onSupprimer,
   ville = "Non renseignée"
 }) {
+    const [coordonneesVisibles, setCoordonneesVisibles] = useState(false);
+    function basculerInformations() {
+      setCoordonneesVisibles(!coordonneesVisibles);
+}
   return(
+
     <div className="fiche">
   <h1>Fiche étudiant</h1>
   <p>
@@ -24,13 +31,13 @@ function StudentCard({
     <strong>Nom :</strong> {nom}
   </p>
 
-      <p>
-        <strong>Email :</strong> {email}
-      </p>
+   {coordonneesVisibles && (
+  <>
+    <p><strong>Email :</strong> {email}</p>
+    <p><strong>Téléphone :</strong> {telephone}</p>
+  </>
+)}
 
-      <p>
-        <strong>Téléphone :</strong> {telephone}
-      </p>
 
       <p>
         <strong>Filière :</strong> {filiere}
@@ -47,7 +54,16 @@ function StudentCard({
       <p>
         <strong>Ville :</strong> {ville}
       </p>
-    </div>
+    
+    <button onClick={basculerInformations}>
+  {coordonneesVisibles
+    ? "Masquer les coordonnées"
+    : "Afficher les coordonnées"}
+</button>
+<button onClick={() => onSupprimer(email)}>
+  Supprimer
+</button>
+</div>
   );
 }
 
