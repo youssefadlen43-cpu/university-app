@@ -1,139 +1,143 @@
+
 import "./App.css";
 import StudentCard from "./components/StudentCard.jsx";
+import StudentForm from "./components/StudentForm.jsx";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Counter } from "./components/counter";
 import { useState } from "react";
 
-
 function App() {
-  function supprimerEtudiant(emailASupprimer) {
-  setEtudiants(
-    etudiants.filter(
-      (etudiant) => etudiant.email !== emailASupprimer
-    )
-  );
-}
-  const [etudiants, setEtudiants] = useState([  {
-    prenom: "Youssef",
-    nom: "Chebbah",
-    email: "youssefadlen43@gmail.com",
-    telephone: "+216 28373124",
-    filiere: "Génie Logiciel et Systèmes d’Information",
-    annee: 2,
-    groupe: "GLSI 2",
-    ville: "Mahdia",
-  },
-  {
-    prenom: "Slim",
-    nom: "Boubaker",
-    email: "slim@example.com",
-    telephone: "",
-    filiere: "Génie Logiciel et Systèmes d’Information",
-    annee: 2,
-    groupe: "GLSI 2",
-    ville: "Mahdia",
-  },
-  {
-    prenom: "Sarra",
-    nom: "Trabelsi",
-    email: "sarra@example.com",
-    telephone: "",
-    filiere: "Génie Logiciel et Systèmes d’Information",
-    annee: 2,
-    groupe: "GLSI 2",
-    ville: "Mahdia",
-  },
-]);
-const [recherche, setRecherche] = useState("");
-function ajouterEtudiant() {
-  const nouvelEtudiant = {
-    prenom: "Yassine",
-    nom: "Ben Salem",
-    email: "yassine.bensalem@gmail.com",
-    telephone: "+216 44 444 444",
-    filiere: "Génie Logiciel et Systèmes d’Information",
-    annee: 2,
-    groupe: "GLSI 1",
-    ville: "Sfax",
-  };
+  const [etudiants, setEtudiants] = useState([
+    {
+      id: 1,
+      prenom: "Youssef",
+      nom: "Chebbah",
+      email: "youssefadlen43@gmail.com",
+      telephone: "+216 28373124",
+      filiere: "GLSI",
+      annee: 2,
+      groupe: "GLSI 2",
+      ville: "Mahdia",
+      image: ""
+    },
+    {
+      id: 2,
+      prenom: "Slim",
+      nom: "Boubaker",
+      email: "slim@example.com",
+      telephone: "",
+      filiere: "GLSI",
+      annee: 2,
+      groupe: "GLSI 2",
+      ville: "Mahdia",
+      image: ""
+    },
+    {
+      id: 3,
+      prenom: "Sarra",
+      nom: "Trabelsi",
+      email: "sarra@example.com",
+      telephone: "",
+      filiere: "GLSI",
+      annee: 2,
+      groupe: "GLSI 2",
+      ville: "Mahdia",
+      image: ""
+    }
+  ]);
 
-  setEtudiants([...etudiants, nouvelEtudiant]);
-}
-function modifierEtudiant(emailAModifier) {
-  const etudiantAModifier = etudiants.find(
-    (etudiant) => etudiant.email === emailAModifier
-  );
+  const [recherche, setRecherche] = useState("");
 
-  if (!etudiantAModifier) return;
+  const [etudiantAModifier, setEtudiantAModifier] = useState(null);
 
-  const nouveauPrenom = prompt("Nouveau prénom :", etudiantAModifier.prenom);
-  const nouveauNom = prompt("Nouveau nom :", etudiantAModifier.nom);
-  const nouvelEmail = prompt("Nouvel email :", etudiantAModifier.email);
+  // Ajouter un étudiant
+  function ajouterEtudiant(nouvelEtudiant) {
+    const etudiantAvecId = {
+      ...nouvelEtudiant,
+      id: Date.now()
+    };
 
-  if (
-    nouveauPrenom?.trim() &&
-    nouveauNom?.trim() &&
-    nouvelEmail?.trim()
-  ) {
-    setEtudiants(
-      etudiants.map((etudiant) =>
-        etudiant.email === emailAModifier
-          ? {
-              ...etudiant,
-              prenom: nouveauPrenom.trim(),
-              nom: nouveauNom.trim(),
-              email: nouvelEmail.trim(),
-            }
-          : etudiant
+    setEtudiants((anciensEtudiants) => [
+      ...anciensEtudiants,
+      etudiantAvecId
+    ]);
+  }
+
+  // Supprimer un étudiant
+  function supprimerEtudiant(idASupprimer) {
+    setEtudiants((anciensEtudiants) =>
+      anciensEtudiants.filter(
+        (etudiant) => etudiant.id !== idASupprimer
       )
     );
   }
-}
-const etudiantsFiltres = etudiants.filter((etudiant) => {
-  const texte = recherche.toLowerCase();
+
+  // Sélectionner un étudiant à modifier
+  function modifierEtudiant(etudiant) {
+    setEtudiantAModifier(etudiant);
+  }
+
+  // Enregistrer les modifications
+  function enregistrerModification(etudiantModifie) {
+    setEtudiants((anciensEtudiants) =>
+      anciensEtudiants.map((etudiant) =>
+        etudiant.id === etudiantAModifier.id
+          ? { ...etudiantModifie, id: etudiant.id }
+          : etudiant
+      )
+    );
+
+    setEtudiantAModifier(null);
+  }
+
+  // Filtrer les étudiants
+  const etudiantsFiltres = etudiants.filter((etudiant) => {
+    const texte = recherche.toLowerCase();
+
+    return (
+      etudiant.prenom.toLowerCase().includes(texte) ||
+      etudiant.nom.toLowerCase().includes(texte) ||
+      etudiant.filiere.toLowerCase().includes(texte)
+    );
+  });
 
   return (
-    etudiant.prenom.toLowerCase().includes(texte) ||
-    etudiant.nom.toLowerCase().includes(texte) ||
-    etudiant.filiere.toLowerCase().includes(texte)
-  );
-});
-  return (
-
     <div className="container">
+
       <Header />
       <Navbar />
+
+      <StudentForm
+        key={etudiantAModifier ? etudiantAModifier.id : "nouveau"}
+        onAjouterEtudiant={ajouterEtudiant}
+        etudiantAModifier={etudiantAModifier}
+        onModifierEtudiant={enregistrerModification}
+      />
+
       <div className="actions">
-  <button onClick={ajouterEtudiant}>
-    + Ajouter un étudiant
-  </button>
-</div>
-<input
-  type="text"
-  placeholder="Rechercher un étudiant..."
-  value={recherche}
-  onChange={(e) => setRecherche(e.target.value)}
-/>
-{etudiantsFiltres.map((etudiant, index) => (
-          <StudentCard
-         key={etudiant.email}
-          prenom={etudiant.prenom}
-          nom={etudiant.nom}
-          email={etudiant.email}
-          telephone={etudiant.telephone}
-          filiere={etudiant.filiere}
-          anneeEtude={etudiant.annee}
-          groupe={etudiant.groupe}
-          ville={etudiant.ville}
+        <input
+          type="text"
+          placeholder="Rechercher un étudiant..."
+          value={recherche}
+          onChange={(e) => setRecherche(e.target.value)}
+        />
+      </div>
+
+      {etudiantsFiltres.map((etudiant) => (
+        <StudentCard
+          key={etudiant.id}
+          etudiant={etudiant}
           onSupprimer={supprimerEtudiant}
-          onModifier={() => modifierEtudiant(etudiant.email)}
+          onModifier={modifierEtudiant}
         />
       ))}
+
       <Counter />
 
       <Footer />
+
     </div>
   );
 }
